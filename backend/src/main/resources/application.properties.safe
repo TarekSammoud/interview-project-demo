@@ -37,5 +37,5 @@ spring.servlet.multipart.max-file-size=10MB
 spring.servlet.multipart.max-request-size=10MB
 
 #=== STRIPE ===
-stripe.apiKey=sk_test_51SaMZZDMQ2hjc8njFXlwOa6y3btf6bSmtVvzaDS94Z4mkQ9JzYXoVMdcceSuMHeXUJSV7FhQFpM7KZxYz4jv5zwl003Tw2SxKE
+stripe.apiKey=
 
