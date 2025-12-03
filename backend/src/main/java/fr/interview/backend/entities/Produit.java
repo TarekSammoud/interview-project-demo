@@ -25,8 +25,5 @@ public class Produit implements Serializable {
 
     private double prix;
 
-    @ElementCollection
-    @CollectionTable(name = "post_media", joinColumns = @JoinColumn(name = "post_id"))
-    @Column(name = "media")
-    private List<String> mediaList;
+    private String media;
 }

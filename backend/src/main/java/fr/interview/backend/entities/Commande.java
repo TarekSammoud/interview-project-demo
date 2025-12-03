@@ -26,7 +26,7 @@ public class Commande implements Serializable {
     @Enumerated(EnumType.STRING)
     private EtatCommande etat;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<CommandeProduit> commandeProduits;
 
     @ManyToMany
