@@ -3,6 +3,8 @@ package fr.interview.backend.controllers;
 import fr.interview.backend.entities.Commande;
 import fr.interview.backend.interfaces.ICommandeService;
 import fr.interview.backend.repositories.ICommandeRepository;
+import fr.interview.backend.services.EmailService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,9 @@ public class CommandeController {
     @Autowired
     ICommandeService commandeService;
 
+    @Autowired
+    EmailService emailService;
+
     @GetMapping
     public List<Commande> getAllCommandes(){
         return commandeService.getAllCommandes();
@@ -27,8 +32,8 @@ public class CommandeController {
     }
 
     @PostMapping
-    public Commande createCommande(@RequestBody Commande commande){
-        return commandeService.createCommande(commande);
+    public Commande createCommande(@RequestBody Commande commande) {
+        return  commandeService.createCommande(commande);
     }
 
 }

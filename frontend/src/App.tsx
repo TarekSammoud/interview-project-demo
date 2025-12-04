@@ -1,17 +1,19 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
 import Products from "./pages/Products";
 import NavBar from "./components/NavBar";
-import Login from "./pages/login";
+import Login from "./pages/Login";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SignUp from "./pages/SignUp";
+import { CartProvider } from "./context/CartContext";
+import CartPage from "./pages/CartPage";
 
 function App() {
   return (
     <AuthProvider>
+      <CartProvider>
       <NavBar />
       <main className="main-content">
         <Routes>
@@ -25,6 +27,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Products />
+              </ProtectedRoute>
+            }
+          />
+
+                    <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <CartPage />
               </ProtectedRoute>
             }
           />
@@ -48,6 +59,7 @@ function App() {
           />
         </Routes>
       </main>
+      </CartProvider>
     </AuthProvider>
   );
 }

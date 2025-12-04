@@ -4,6 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import { getAllGarniture } from "../services/garnitureApi";
 import { useAuthContext } from "../context/AuthContext";
 import { goToCheckOut, createCommande } from "../services/commandeApi";
+import { useCart } from "../context/CartContext";
 
 interface Garniture {
     id: number;
@@ -30,6 +31,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
     const [availableGarnitures, setAvailableGarnitures] = useState<Garniture[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [checkoutStarted, setCheckoutStarted] = useState(false);
+
+
+    const { addToCart } = useCart();
+
 
     useEffect(() => {
         const loadGarnitures = async () => {
@@ -43,6 +49,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
         };
         loadGarnitures();
     }, []);
+
+    const handleAddToCart = () => {
+        const cartItem = {
+            produit: { id: produit.id, nom: produit.nom, prix: produit.prix, media: produit.media },
+            garnitures: selectedGarnitures.map(id => ({ id }))
+        };
+
+        addToCart(cartItem);
+        setModalShow(false);
+    };
 
     // Group garnitures by type
     const groupedGarnitures = availableGarnitures.reduce<Record<string, Garniture[]>>(
@@ -60,10 +76,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
     }, produit.prix);
 
     const handlePay = async () => {
+
         if (!token || !userId) {
             setError("You must be logged in");
             return;
         }
+        if (checkoutStarted) return; 
+        setCheckoutStarted(true);
 
         try {
             setLoading(true);
@@ -80,8 +99,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
             window.location.href = checkoutUrl; // redirect to Stripe
         } catch (err: any) {
             setError(err.message || "Failed to start checkout");
+                    setCheckoutStarted(false);
+
         } finally {
             setLoading(false);
+                    setCheckoutStarted(false);
+
         }
     };
 
@@ -165,9 +188,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
                                 <h5>Total: {totalPrice.toFixed(2)} €</h5>
                             </div>
 
-                            <Button variant="success" disabled={loading} onClick={handlePay}>
-                                Pay {totalPrice.toFixed(2)}
-                            </Button>
+                            <div className="d-flex gap-2">
+                                <Button variant="primary" onClick={handleAddToCart}>
+                                    Ajouter au panier ({totalPrice.toFixed(2)} €)
+                                </Button>
+
+                                <Button variant="success" disabled={loading} onClick={handlePay}>
+                                    Checkout
+                                </Button>
+                            </div>
+
                         </div>
                     </div>
                 </Modal.Body>

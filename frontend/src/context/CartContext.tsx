@@ -1,56 +1,47 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-interface Produit {
-  id: number
-}
+const CartContext = createContext<any>(null);
 
-interface Garniture {
-  id: number
-}
+export function CartProvider({ children }) {
+  const [cart, setCart] = useState<any[]>(() => {
+    try {
+      const saved = localStorage.getItem("cart");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
-interface CartItem {
-  produit: Produit;
-  garnitures?: Garniture[];
-}
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
-interface CartContextType {
-  items: CartItem[];
-  garnitures: Garniture[];
-  addItem: (item: CartItem) => void;
-  removeItem: (produitId: number) => void;
-  addGarniture: (garniture: Garniture) => void;
-  removeGarniture: (garnitureId: number) => void;
-  clearCart: () => void;
-}
+  function addToCart(item) {
+    setCart((prev) => [...prev, item]);
+  }
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
+  function removeFromCart(index) {
+    setCart((prev) => prev.filter((_, i) => i !== index));
+  }
 
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) throw new Error("useCart must be used within CartProvider");
-  return context;
-};
-
-export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [garnitures, setGarnitures] = useState<Garniture[]>([]);
-
-  const addItem = (item: CartItem) => setItems(prev => [...prev, item]);
-  const removeItem = (produitId: number) =>
-    setItems(prev => prev.filter(i => i.produit.id !== produitId));
-
-  const addGarniture = (garniture: Garniture) => setGarnitures(prev => [...prev, garniture]);
-  const removeGarniture = (garnitureId: number) =>
-    setGarnitures(prev => prev.filter(e => e.id !== garnitureId));
-
-  const clearCart = () => {
-    setItems([]);
-    setGarnitures([]);
-  };
+  function clearCart() {
+    setCart([]);
+  }
 
   return (
-    <CartContext.Provider value={{ items, garnitures, addItem, removeItem, addGarniture, removeGarniture, clearCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
-};
+}
+
+export function useCart() {
+  return useContext(CartContext);
+}

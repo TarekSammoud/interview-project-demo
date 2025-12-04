@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 // UserService.java (implements UserDetailsService)
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,10 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) {
         return userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+    }
+
+    public Optional<User> findUserById(Long id){
+        return userRepo.findById(id);
     }
 
     @Transactional

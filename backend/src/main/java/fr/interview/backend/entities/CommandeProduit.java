@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -32,6 +34,6 @@ public class CommandeProduit {
             joinColumns = @JoinColumn(name = "commande_produit_id"),
             inverseJoinColumns = @JoinColumn(name = "garniture_id")
     )
-    private List<Garniture> garnitures;
+    private List<Garniture> garnitures ;
 }
 

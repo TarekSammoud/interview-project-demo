@@ -9,7 +9,10 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -31,11 +34,11 @@ public class Commande implements Serializable {
     private User customer;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
     private List<CommandeProduit> commandeProduits;
 
     @ManyToMany
-    private List<ExtraCommande> extras;
+    private List<ExtraCommande> extras = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
