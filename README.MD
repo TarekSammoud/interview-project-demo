@@ -62,7 +62,4 @@ L'application sera accessible sur `http://localhost:5173`.
 
 Lors de la création d'un nouveau compte, vous recevrez un **lien d'activation dans MailDev**. Vous **ne pourrez pas vous connecter tant que le compte n'est pas activé**. Toute action nécessitant un token JWT valide échouera si l'activation n'a pas été effectuée.
 
----
 
-Ce projet a été conçu pour montrer mes compétences en **développement fullstack**, **gestion de panier**, **intégration de paiement** et **gestion sécurisée des utilisateurs**.
-N'hésitez pas à poser des questions lors de l'entretien, je pourrai expliquer le code et mes choix techniques.
