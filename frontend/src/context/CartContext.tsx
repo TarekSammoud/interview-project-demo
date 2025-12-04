@@ -1,8 +1,13 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { CartItem } from "../types/cart";
+
+interface CartProviderProps {
+  children: ReactNode;
+}
 
 const CartContext = createContext<any>(null);
 
-export function CartProvider({ children }) {
+export function CartProvider({ children }: CartProviderProps) {
   const [cart, setCart] = useState<any[]>(() => {
     try {
       const saved = localStorage.getItem("cart");
@@ -16,11 +21,11 @@ export function CartProvider({ children }) {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  function addToCart(item) {
+  function addToCart(item: CartItem) {
     setCart((prev) => [...prev, item]);
   }
 
-  function removeFromCart(index) {
+  function removeFromCart(index:number) {
     setCart((prev) => prev.filter((_, i) => i !== index));
   }
 

@@ -1,6 +1,5 @@
 package fr.interview.backend.services;
 
-// src/main/java/fr/eseo/ld/ts/td/config/JwtService.java
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,7 +17,7 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.access-expiration-ms:900000}")  // 15 min default
+    @Value("${jwt.access-expiration-ms:900000}")
     private long accessTokenExpiration;
 
     // ------------------- PUBLIC METHODS -------------------
@@ -57,7 +56,6 @@ public class JwtService {
     }
 
     private SecretKey getSignInKey() {
-        // Your secret from application.yml is base64 → Spring auto-decodes if you use ${}
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 }

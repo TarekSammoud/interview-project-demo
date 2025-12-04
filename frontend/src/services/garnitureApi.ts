@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:9090/garniture";
+const BASE_URL = "http://localhost:9091/garniture";
 
 
 export const getAllGarniture = async (): Promise<any[]> => {

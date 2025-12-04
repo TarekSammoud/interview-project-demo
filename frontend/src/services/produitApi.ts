@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:9090/produit";
+const BASE_URL = "http://localhost:9091/produit";
 
 
 export const getAllProduits = async (): Promise<any[]> => {

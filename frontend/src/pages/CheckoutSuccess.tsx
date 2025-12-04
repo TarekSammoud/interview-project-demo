@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { createCommande } from "../services/commandeApi";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 export default function CheckoutSuccess() {
     const { token, userId } = useAuthContext();
+    const { clearCart } = useCart();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,6 +27,8 @@ export default function CheckoutSuccess() {
                 });
 
                 localStorage.removeItem("pendingCommande");
+                localStorage.removeItem("cart");
+                clearCart()
                 alert("Commande successfully created!");
                 navigate("/produits");
             } catch (err: any) {

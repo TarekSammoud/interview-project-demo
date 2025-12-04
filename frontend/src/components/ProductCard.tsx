@@ -20,9 +20,13 @@ interface Produit {
     media: string;
 }
 
-interface ProductCardProps {
+export interface ProductCardProps {
     produit: Produit;
+    userId: number | null;
+    token: string | null;
+    createCommande: (payload: { produitId: number; garnitureIds?: number[] }) => Promise<any>;
 }
+
 
 const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
     const { token, userId } = useAuthContext();
@@ -53,7 +57,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
     const handleAddToCart = () => {
         const cartItem = {
             produit: { id: produit.id, nom: produit.nom, prix: produit.prix, media: produit.media },
-            garnitures: selectedGarnitures.map(id => ({ id }))
+            garnitures: selectedGarnitures.map(id => {
+                const garn = availableGarnitures.find(g => g.id === id);
+                return { id: id, prix: garn?.prix || 0, nom:garn?.nom };
+            })
         };
 
         addToCart(cartItem);
@@ -81,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
             setError("You must be logged in");
             return;
         }
-        if (checkoutStarted) return; 
+        if (checkoutStarted) return;
         setCheckoutStarted(true);
 
         try {
@@ -99,11 +106,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
             window.location.href = checkoutUrl; // redirect to Stripe
         } catch (err: any) {
             setError(err.message || "Failed to start checkout");
-                    setCheckoutStarted(false);
+            setCheckoutStarted(false);
 
         } finally {
             setLoading(false);
-                    setCheckoutStarted(false);
+            setCheckoutStarted(false);
 
         }
     };
@@ -117,7 +124,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
                     style={{ cursor: "pointer" }}
                 >
                     <img
-                        src={`http://localhost:9090/api/file/${produit.media}`}
+                        src={`http://localhost:9091/api/file/${produit.media}`}
                         className="card-img-top"
                         alt={produit.nom}
                         style={{ height: "250px", objectFit: "cover" }}
@@ -143,7 +150,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
                     <div className="d-flex flex-wrap">
                         <div style={{ flex: 1, minWidth: "250px", marginRight: "20px" }}>
                             <img
-                                src={`http://localhost:9090/api/file/${produit.media}`}
+                                src={`http://localhost:9091/api/file/${produit.media}`}
                                 alt={produit.nom}
                                 className="img-fluid rounded mb-2"
                             />
@@ -190,11 +197,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ produit }) => {
 
                             <div className="d-flex gap-2">
                                 <Button variant="primary" onClick={handleAddToCart}>
-                                    Ajouter au panier ({totalPrice.toFixed(2)} €)
+                                    Ajouter au panier
                                 </Button>
 
                                 <Button variant="success" disabled={loading} onClick={handlePay}>
-                                    Checkout
+                                    Checkout ({totalPrice.toFixed(2)} €)
                                 </Button>
                             </div>
 

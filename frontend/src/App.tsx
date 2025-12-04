@@ -14,51 +14,51 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-      <NavBar />
-      <main className="main-content">
-        <Routes>
-          {/* Public route */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/sign-up" element={<SignUp />} />
+        <NavBar />
+        <main className="main-content">
+          <Routes>
+            {/* Public route */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/sign-up" element={<SignUp />} />
 
-          {/* Protected routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Products />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Products />
+                </ProtectedRoute>
+              }
+            />
 
-                    <Route
-            path="/cart"
-            element={
-              <ProtectedRoute>
-                <CartPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/cart"
+              element={
+                <ProtectedRoute>
+                  <CartPage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/produits"
-            element={
-              <ProtectedRoute>
-                <Products />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/produits"
+              element={
+                <ProtectedRoute>
+                  <Products />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/checkout-success"
-            element={
-              <ProtectedRoute>
-                <CheckoutSuccess />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </main>
+            <Route
+              path="/checkout-success"
+              element={
+                <ProtectedRoute>
+                  <CheckoutSuccess />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </main>
       </CartProvider>
     </AuthProvider>
   );

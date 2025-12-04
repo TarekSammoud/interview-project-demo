@@ -34,23 +34,29 @@ function Products() {
         loadProduits();
     }, []);
 
-    const handleSearch = async (e: FormEvent) => {
-        e.preventDefault();
+const handleSearch = async (e: FormEvent) => {
+    e.preventDefault();
 
-        if (!searchQuery.trim() || loading) return;
+    try {
+        setLoading(true);
 
-        try {
-            setLoading(true);
+        if (!searchQuery.trim()) {
+            const fetchedProduits = await getAllProduits();
+            setProduits(fetchedProduits);
+            setError("");
+        } else {
             const results = await getProduitByQuery(searchQuery);
             setProduits(results);
             setError("");
-        } catch (err) {
-            console.error(err);
-            setError("Failed to search products...");
-        } finally {
-            setLoading(false);
         }
-    };
+    } catch (err) {
+        console.error(err);
+        setError("Failed to search products...");
+    } finally {
+        setLoading(false);
+    }
+};
+
 
 
     const handleCreateCommande = async (payload: { produitId: number; garnitureIds?: number[] }) => {
