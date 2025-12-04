@@ -34,8 +34,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
-                                "/departments/**",
-                                "/employees/**",
+                                "/produit/**",
+                                "/garniture/**",
+                                "/extra-commande/**",
+                                "/api/file/**",
                                 // Swagger UI + OpenAPI full access
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

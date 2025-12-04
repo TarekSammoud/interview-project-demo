@@ -12,4 +12,6 @@ public interface IProduitService {
     List<Produit> getAllProduits();
     Optional<Produit> getProduitById(Long id);
     Produit createProduit(Produit p, MultipartFile f) throws IOException;
+
+    List<Produit> getProduitByQuery(String query);
 }

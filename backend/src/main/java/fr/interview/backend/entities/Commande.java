@@ -21,14 +21,29 @@ public class Commande implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime dateCommande;
 
     @Enumerated(EnumType.STRING)
     private EtatCommande etat;
+
+    @ManyToOne
+    private User customer;
+
 
     @ManyToMany(cascade = CascadeType.ALL)
     private List<CommandeProduit> commandeProduits;
 
     @ManyToMany
     private List<ExtraCommande> extras;
+
+    @PrePersist
+    public void prePersist() {
+        if (dateCommande == null) {
+            dateCommande = LocalDateTime.now();
+        }
+        if (etat == null) {
+            etat = EtatCommande.EN_ATTENTE;
+        }
+    }
 }

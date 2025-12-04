@@ -2,13 +2,16 @@
 package fr.interview.backend.controllers;
 
 
+import fr.interview.backend.entities.User;
 import fr.interview.backend.payload.request.LoginRequest;
 import fr.interview.backend.payload.request.RegisterRequest;
 import fr.interview.backend.payload.request.TokenRefreshRequest;
 import fr.interview.backend.payload.response.AuthResponse;
 import fr.interview.backend.payload.response.MessageResponse;
+import fr.interview.backend.repositories.UserRepository;
 import fr.interview.backend.services.*;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +20,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,6 +35,9 @@ public class AuthController {
     private final UserService userService;
     private final VerificationTokenService verificationTokenService;
     private final EmailService emailService;
+
+    @Autowired
+    UserRepository userRepository;
 
     public AuthController(
             AuthenticationManager authenticationManager,
@@ -57,7 +66,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Account activated successfully!"));
     }
 
-    @PostMapping("/login")
+  /*  @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
@@ -65,27 +74,42 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Long userId = ((User) userDetails).getId();
 
         String accessToken = jwtService.generateToken(userDetails);
         String refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername()).getToken();
 
-        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken,userId));
+    }*/
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Get the Spring Security UserDetails
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        // Fetch your actual User entity from DB
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Generate JWT
+        String accessToken = jwtService.generateToken(userDetails);
+        String refreshToken = refreshTokenService.createRefreshToken(user.getEmail()).getToken();
+
+        // Return token + userId
+        Map<String, Object> response = new HashMap<>();
+        response.put("accessToken", accessToken);
+        response.put("refreshToken", refreshToken);
+        response.put("userId", user.getId());
+
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        return refreshTokenService.findByToken(request.refreshToken())
-                .map(refreshTokenService::verifyExpiration)
-                .map(refreshToken -> {
-                    String username = refreshToken.getUser().getEmail();
-                    UserDetails userDetails = userService.loadUserByUsername(username);
-                    String newAccessToken = jwtService.generateToken(userDetails);
-                    return new AuthResponse(newAccessToken, refreshToken.getToken());
-                })
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest()
-                        .body(new AuthResponse(null, null))); // or throw exception
-    }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@AuthenticationPrincipal UserDetails userDetails) {

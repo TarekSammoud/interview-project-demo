@@ -38,4 +38,9 @@ public class ProduitService implements IProduitService {
         p.setMedia(mediaUrl);
         return produitRepository.save(p);
     }
+
+    @Override
+    public List<Produit> getProduitByQuery(String query) {
+        return produitRepository.findProduitsByNomContainingIgnoreCase(query);
+    }
 }
